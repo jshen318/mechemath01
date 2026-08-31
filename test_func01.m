@@ -4,4 +4,5 @@ function [fval,dfdx] = test_func01(x)
     % @ sign (handle operator) e.g. solver(@test_func01,x_guess)
     fval = (x.^3)/100 - (x.^2)/8 + 2*x + 6*sin(x/2+6) - 0.7 - exp(x/6);
     dfdx = 3*(x.^2)/100 - x/4 + 2 + 3*cos(x/2 + 6) - exp(x/6)/6;
+    %shauna is so cool this is a test kachow kachow good morning hahaha
 end
