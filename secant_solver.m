@@ -17,54 +17,54 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
     iteration_flag = true;     % set flags True to start the while loop
     interval_flag = true;
     value_flag = true;
-    max_flag = true;
-
-    denomZero = false; 
 
     % loop through newton's method until the root is found, or until
     % the iteration maximum is hit
-    while interval_flag && value_flag && iteration_flag && max_flag ~=denomZero
+    while interval_flag && value_flag && iteration_flag
         y0 = fun(x0);
         y1 = fun(x1);
-        
-        
-        if abs(y1-y0) < ftol    % check for zero in denom
-            denomZero = true;
-            exit_flag = 0;
-            return  % is "returning" the best practice for terminating in the middle of a while loop?
-        end
 
-        x2 = x1 - y1*((x1-x0) / (y1-y0));
+        if dxmax < abs(x1 - x0)         % check for zero in denom
+            disp("Zero denominator error, or oversized update step size.")
+            exit_flag = 0;              % if true: mark failure and exit
+            return                      % the program
+        end
         
-        if mod(iter,2) == 0
+        x2 = x1 - y1*((x1-x0) / (y1-y0)); % otherwise, continue computing
+        
+        if mod(iter,2) == 0      % alternate assignment variable every loop
             x0 = x2;
         else
             x1 = x2;
         end
 
-        % add one to the iteration
-        iter = iter+1;
-
+        iter = iter+1;          % add one to the iteration
 
         % break while loop if...
-        % iterations are too close together (guesses too far left/right)
-        interval_flag = dxtol < abs(x1 - x0);
-
+        % iterations are too close together (tending to something not a root)
         % final value guess is 'close enough' to zero
-        value_flag = ftol < abs(fun(x1));
-
         % maximum iteration values reached
+        % iterations are too far apart
+        interval_flag = dxtol < abs(x1 - x0);
+        value_flag = ftol < abs(fun(x2));
         iteration_flag = max_iter > iter;
 
-        % iterations are too far apart
-        max_flag = dxmax > abs(x1 - x0);
- 
-        
         % else: continue while loop to try and find roots
+        
     end
 
     % success is based on whether the final value is 'close enough' to
     % zero. set exit_flag correspondingly
-    exit_flag = ftol > abs(fun(x2));
-
+    if ftol > abs(fun(x2))
+        exit_flag = 1;
+        return
+    elseif ~interval_flag
+        disp("Iterations tending towards a false root.")
+        exit_flag = 0;
+        return
+    else ~iteration_flag;
+        disp("Maximum iterations reached.")
+        exit_flag = 0;
+        return
+    end
 end

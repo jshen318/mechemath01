@@ -19,18 +19,17 @@ function [x_mid, exit_flag] = bisection_solver(fun,x_left,x_right,dxtol,ftol,max
     iteration_flag = true;      % set flags True to start the while loop
     interval_flag = true;
     value_flag = true;
-    zero_cross_flag = true;
 
-    
-
-    if x_left*x_right > 0    % check if interval crosses zero, if not terminate
+    if y_left*y_right > 0    % check if guesses crosses zero
         x_mid = NaN;
-        zero_cross_flag = false;
+        exit_flag = 0;
+        disp("No zero crossing between guesses; try a different initial guess?")
+        return
     end
 
     % loop through the bisection method until the root is found, or until
     % the iteration maximum is hit
-    while interval_flag && value_flag && iteration_flag && zero_cross_flag
+    while interval_flag && value_flag && iteration_flag
         x_mid = (x_right + x_left)/2;
         y_mid = fun(x_mid);
 
@@ -50,16 +49,14 @@ function [x_mid, exit_flag] = bisection_solver(fun,x_left,x_right,dxtol,ftol,max
 
         % break while loop if...
         % iterations are too close together (guesses too far left/right)
-        interval_flag = dxtol < (x_right - x_left);
-        
         % final value guess is 'close enough' to zero
+        % or maximum iteration values reached
         value_flag = ftol < abs(fun(x_mid));
-
-        % maximum iteration values reached
+        interval_flag = dxtol < (x_right - x_left);
         iteration_flag = max_iter > iter;
- 
 
         % else: continue while loop to try and find roots
+
     end
     
     % success is based on whether the final value is 'close enough' to
