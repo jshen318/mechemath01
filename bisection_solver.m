@@ -19,10 +19,18 @@ function [x_mid, exit_flag] = bisection_solver(fun,x_left,x_right,dxtol,ftol,max
     iteration_flag = true;      % set flags True to start the while loop
     interval_flag = true;
     value_flag = true;
+    zero_cross_flag = true;
+
+    
+
+    if x_left*x_right > 0    % check if interval crosses zero, if not terminate
+        x_mid = NaN;
+        zero_cross_flag = false;
+    end
 
     % loop through the bisection method until the root is found, or until
     % the iteration maximum is hit
-    while interval_flag && value_flag && iteration_flag
+    while interval_flag && value_flag && iteration_flag && zero_cross_flag
         x_mid = (x_right + x_left)/2;
         y_mid = fun(x_mid);
 

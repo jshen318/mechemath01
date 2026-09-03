@@ -9,12 +9,12 @@ function basic_solver_with_tests_template()
     plot(xvals,0*xvals,'k--','linewidth',1);
     xlabel('x'); ylabel('y'); title('Test Function 1');
 
-    % %Newton's method example test
-    % x0_guess = 2;
-    % plot(x0_guess,test_func01(x0_guess),'bo','markerfacecolor','b','markersize',5);
-    % 
-    % x_sol = newton_solver(@test_func01,x0_guess);
-    % plot(x_sol,test_func01(x_sol),'go','markerfacecolor','g','markersize',5);
+    %Newton's method example test
+    x0_guess = -2;
+    plot(x0_guess,test_func01(x0_guess),'bo','markerfacecolor','b','markersize',5);
+
+    x_sol = newton_solver(@test_func01,x0_guess);
+    plot(x_sol,test_func01(x_sol),'go','markerfacecolor','g','markersize',5);
     
 
     %Secant method example test

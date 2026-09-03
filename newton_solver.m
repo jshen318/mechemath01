@@ -22,12 +22,21 @@ function [x, exit_flag] = newton_solver(fun,x0,dxtol,ftol,max_iter,dxmax)
     value_flag = true;
     max_flag = true;
 
+    denomZero = false; % initialize denom zero checker
+
     % loop through newton's method until the root is found, or until
     % the iteration maximum is hit
-    while interval_flag && value_flag && iteration_flag && max_flag
+    while interval_flag && value_flag && iteration_flag && max_flag && ~denomZero
 
         [fx, dfdx] = fun(x);            % compute Newton's method of 
         x_temp = x;                     % root-finding
+
+        if abs(dfdx) < ftol
+            denomZero = true;
+            exit_flag = 0;
+            return  % is "returning" the best practice for terminating in the middle of a while loop?
+        end
+
         x = x_temp - fx/dfdx;
 
         % add one to the iteration

@@ -19,11 +19,20 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
     value_flag = true;
     max_flag = true;
 
+    denomZero = false; 
+
     % loop through newton's method until the root is found, or until
     % the iteration maximum is hit
-    while interval_flag && value_flag && iteration_flag && max_flag
+    while interval_flag && value_flag && iteration_flag && max_flag ~=denomZero
         y0 = fun(x0);
         y1 = fun(x1);
+        
+        
+        if abs(y1-y0) < ftol    % check for zero in denom
+            denomZero = true;
+            exit_flag = 0;
+            return  % is "returning" the best practice for terminating in the middle of a while loop?
+        end
 
         x2 = x1 - y1*((x1-x0) / (y1-y0));
         
