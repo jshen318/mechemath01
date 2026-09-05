@@ -20,8 +20,7 @@
 %   dxmax = 1e10
 %OUTPUTS
 %   
-function convergence_experiment(num_iter, x0_ref, dxtol, ftol, max_iter, dxmax, solver)
-
+function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, x0_ref, x1_ref, dxtol, ftol, max_iter, dxmax, solver)
     target_root = fzero(@test_func01,x0_ref); % true root calculated by 
     % MATLAB fzero (we will compare this to the roots we calculate to get 
     % an error value)
@@ -37,7 +36,7 @@ function convergence_experiment(num_iter, x0_ref, dxtol, ftol, max_iter, dxmax, 
     % create a list for the initial guesses that we would like to use in 
     % each trial
     x0_list = linspace(x0_ref-2,x0_ref+2,num_iter);
-    
+    x1_list = linspace(x1_ref-2,x1_ref+2,num_iter);
     % list of estimate at current iteration (x_{n})
     x_current_list = [];
     
@@ -52,18 +51,18 @@ function convergence_experiment(num_iter, x0_ref, dxtol, ftol, max_iter, dxmax, 
     for n = 1:num_iter
         % pull out the left and right guess for the trial
         x0 = x0_list(n);
-    
+        x1 = x1_list(n);
         % reset input_list for the next test
         my_recorder.clear_input_list();
         
         % Call your root finder using the recording function
         % you will need to change this, depending on the solver
         if solver == "Newton"
-            x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax);
+            x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax)
         elseif solver == "Secant"
-            x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter);
+            x_root = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax)
         elseif solver == "Bisection"
-            x_root = newton_solver(f_record,x0(1),x0(2),dxtol,ftol,max_iter,dxmax);
+            x_root = bisection_solver(f_record,x0,x1,dxtol,ftol,max_iter)
         else
             disp("Input valid solver method: Newton, Secant, or Bisection")
         end
