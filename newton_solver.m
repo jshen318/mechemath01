@@ -43,7 +43,7 @@ function [x, exit_flag] = newton_solver(fun,x0,dxtol,ftol,max_iter,dxmax)
         % maximum iteration values reached
         % or iterations are too far apart
         interval_flag = dxtol < abs(x - x_temp);
-        value_flag = ftol < abs(fun(x));
+        value_flag = ftol < abs(fx);
         iteration_flag = max_iter > iter;
  
         % else: continue while loop to try and find roots
@@ -53,7 +53,7 @@ function [x, exit_flag] = newton_solver(fun,x0,dxtol,ftol,max_iter,dxmax)
     % success is based on whether the final value is 'close enough' to
     % zero. set exit_flag correspondingly
     
-    if ftol > abs(fun(x))
+    if ftol > abs(fx)
         exit_flag = 1;
         return
     elseif ~interval_flag

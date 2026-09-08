@@ -125,11 +125,18 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
     title('Error Convergence Plot for Solver');
     hold on
     loglog(x_regression, y_regression,'bo','markerfacecolor','b','markersize',2);
-    legend("Raw Data", "Filtered Data")
+    
     
     [p,k] = generate_error_fit(x_regression, y_regression)
 
+    %generate x data on a logarithmic range
+    fit_line_x = 10.^[-16:.01:1];
+    %compute the corresponding y values
+    fit_line_y = k*fit_line_x.^p;
+    %plot on a loglog plot.
+    loglog(fit_line_x,fit_line_y,'k-','linewidth',2)
 
+    legend("Raw Data", "Filtered Data", "Fit Line")
 end
 
 %Definition of the test function and its derivative (as a single function):

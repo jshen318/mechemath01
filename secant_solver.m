@@ -24,6 +24,7 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
         y0 = fun(x0);
         y1 = fun(x1);
 
+
         if dxmax < abs(x1 - x0)         % check for zero in denom
             disp("Zero denominator error, or oversized update step size.")
             exit_flag = 0;              % if true: mark failure and exit
@@ -39,6 +40,8 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
         end
 
         iter = iter+1;          % add one to the iteration
+        
+    
 
         % break while loop if...
         % iterations are too close together (tending to something not a root)
