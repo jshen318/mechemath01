@@ -90,12 +90,46 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
     abs_error_current = abs(x_current_list-target_root);
     abs_error_next = abs(x_next_list-target_root);
 
-    %generate a loglog plot
+    % % generate a loglog plot (before filtering)
+    % loglog(abs_error_current,abs_error_next,...
+    %     'ro','markerfacecolor','r','markersize',2);
+    % 
+    % xlabel('\epsilon_n (-)'); ylabel('\epsilon_{n+1} (-)');
+    % title('Error Convergence Plot for Solver');
+
+% ------------ cleaning data
+
+    %data points to be used in the regression
+    x_regression = []; % e_n
+    y_regression = []; % e_{n+1}
+    filter_list = [1e-15, 1e-2, 1e-14, 1e-2, 2];
+
+    %iterate through the collected data
+    for n=1:length(index_list)
+        %if the error is not too big or too small
+        %and it was enough iterations into the trial...
+        if abs_error_current(n)>filter_list(1) && abs_error_current(n)<filter_list(2) && ...
+           abs_error_next(n)>filter_list(3) && abs_error_next(n)<filter_list(4) && ...
+           index_list(n)>filter_list(5)
+        %then add it to the set of points for regression
+         x_regression(end+1) = abs_error_current(n);
+         y_regression(end+1) = abs_error_next(n);
+        end
+    end
+
+    % generate a loglog plot (after filtering)
     loglog(abs_error_current,abs_error_next,...
         'ro','markerfacecolor','r','markersize',2);
 
     xlabel('\epsilon_n (-)'); ylabel('\epsilon_{n+1} (-)');
     title('Error Convergence Plot for Solver');
+    hold on
+    loglog(x_regression, y_regression,'bo','markerfacecolor','b','markersize',2);
+    legend("Raw Data", "Filtered Data")
+    
+    [p,k] = generate_error_fit(x_regression, y_regression)
+
+
 end
 
 %Definition of the test function and its derivative (as a single function):
