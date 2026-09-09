@@ -35,8 +35,8 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
 
     % create a list for the initial guesses that we would like to use in 
     % each trial
-    x0_list = linspace(x0_ref-2,x0_ref+2,num_iter);
-    x1_list = linspace(x1_ref-2,x1_ref+2,num_iter);
+    x0_list = linspace(x0_ref-3,x0_ref+3,num_iter);
+    x1_list = linspace(x1_ref-3,x1_ref+3,num_iter);
     % list of estimate at current iteration (x_{n})
     x_current_list = [];
     
@@ -52,17 +52,19 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
         % pull out the left and right guess for the trial
         x0 = x0_list(n);
         x1 = x1_list(n);
+        % x0 = target_root - 3*rand();
+        % x1 = target_root + 3*rand();
         % reset input_list for the next test
         my_recorder.clear_input_list();
         
         % Call your root finder using the recording function
         % you will need to change this, depending on the solver
         if solver == "Newton"
-            x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax)
+            x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax);
         elseif solver == "Secant"
-            x_root = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax)
+            x_root = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax);
         elseif solver == "Bisection"
-            x_root = bisection_solver(f_record,x0,x1,dxtol,ftol,max_iter)
+            [x_root, ~, guess_list] = bisection_solver(f_record,x0,x1,dxtol,ftol,max_iter);
         else
             disp("Input valid solver method: Newton, Secant, or Bisection")
         end
@@ -75,9 +77,15 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
         %In other words, it is now [x_1,x_2,...x_n-1,x_n]
     
         %append the collected data to the compilation
-        x_current_list = [x_current_list,input_list(1:end-1)];
-        x_next_list = [x_next_list,input_list(2:end)];
-        index_list = [index_list,1:length(input_list)-1];
+        if solver == "Bisection"
+            x_current_list = [x_current_list,guess_list(1:end-1)];
+            x_next_list = [x_next_list,guess_list(2:end)];
+            index_list = [index_list,guess_list(1:end-1)];
+        else
+            x_current_list = [x_current_list,input_list(1:end-1)];
+            x_next_list = [x_next_list,input_list(2:end)];
+            index_list = [index_list,1:length(input_list)-1];
+        end
     end
 
     %At this point, x_current_list corresponds to many many
@@ -85,7 +93,7 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
     %and x_next_list corresponds to many many measurements of
     %the corresponding value of x_{n+1} across many trials
     %this is the data the you want to clean and analaze
-
+    
     %compute the absolute value of the error for current/next iteration
     abs_error_current = abs(x_current_list-target_root);
     abs_error_next = abs(x_next_list-target_root);
@@ -109,13 +117,18 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
         %if the error is not too big or too small
         %and it was enough iterations into the trial...
         if abs_error_current(n)>filter_list(1) && abs_error_current(n)<filter_list(2) && ...
-           abs_error_next(n)>filter_list(3) && abs_error_next(n)<filter_list(4) && ...
-           index_list(n)>filter_list(5)
-        %then add it to the set of points for regression
-         x_regression(end+1) = abs_error_current(n);
-         y_regression(end+1) = abs_error_next(n);
+            abs_error_next(n)>filter_list(3) && abs_error_next(n)<filter_list(4) && ...
+            index_list(n)>filter_list(5)
+            %then add it to the set of points for regression
+            x_regression(end+1) = abs_error_current(n);
+            y_regression(end+1) = abs_error_next(n);
         end
+        % x_regression(end+1) = abs_error_current(n);
+        % y_regression(end+1) = abs_error_next(n);
     end
+
+    disp(length(x_regression))
+    disp(length(y_regression))
 
     % generate a loglog plot (after filtering)
     loglog(abs_error_current,abs_error_next,...
@@ -124,7 +137,7 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
     xlabel('\epsilon_n (-)'); ylabel('\epsilon_{n+1} (-)');
     title('Error Convergence Plot for Solver');
     hold on
-    loglog(x_regression, y_regression,'bo','markerfacecolor','b','markersize',2);
+    loglog(x_regression, y_regression, 'bo','markerfacecolor','b','markersize',2);
     
     
     [p,k] = generate_error_fit(x_regression, y_regression)
@@ -134,7 +147,7 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
     %compute the corresponding y values
     fit_line_y = k*fit_line_x.^p;
     %plot on a loglog plot.
-    loglog(fit_line_x,fit_line_y,'k-','linewidth',2)
+    loglog(fit_line_x,fit_line_y,'k-','linewidth',1)
 
     legend("Raw Data", "Filtered Data", "Fit Line")
 end
