@@ -38,18 +38,18 @@ function [x_mid, exit_flag, guess_list] = bisection_solver(fun,x_left,x_right,dx
 
         % check if the left and middle values are different signs
         if y_left*y_mid < 0
+            guess_list(end+1) = x_right;
             y_right = y_mid;
             x_right = x_mid;
-            % guess_list(end+1) = x_mid;
         
         % check if the right and middle values are different signs
         elseif y_right*y_mid < 0
+            guess_list(end+1) = x_left;
             y_left = y_mid;
             x_left = x_mid;
-            % guess_list(end+1) = x_mid;
         end
 
-        guess_list(end+1)=x_mid;
+        % guess_list(end+1)=x_mid;
 
         % add one to the iteration
         iter = iter+1;

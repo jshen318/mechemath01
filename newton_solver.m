@@ -30,7 +30,7 @@ function [x, exit_flag] = newton_solver(fun,x0,dxtol,ftol,max_iter,dxmax)
         [fx, dfdx] = fun(x);            % compute Newton's method of 
         x_temp = x;                     % root-finding
         if dxmax < abs(x - x_temp)      % check for a denominator of zero
-            disp("Zero denominator error, or oversized update step size.")
+            % disp("Zero denominator error, or oversized update step size.")
             exit_flag = 0;              % if true: mark failure and exit
             return                      % the program
         end
@@ -59,11 +59,11 @@ function [x, exit_flag] = newton_solver(fun,x0,dxtol,ftol,max_iter,dxmax)
         exit_flag = 1;
         return
     elseif ~interval_flag
-        disp("Iterations tending towards a false root.")
+        % disp("Iterations tending towards a false root.")
         exit_flag = 0;
         return
     else ~iteration_flag;
-        disp("Maximum iterations reached.")
+        % disp("Maximum iterations reached.")
         exit_flag = 0;
         return
     end

@@ -50,10 +50,10 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
     % loop through each trial
     for n = 1:num_iter
         % pull out the left and right guess for the trial
-        x0 = x0_list(n);
-        x1 = x1_list(n);
-        % x0 = target_root - 3*rand();
-        % x1 = target_root + 3*rand();
+        % x0 = x0_list(n);
+        % x1 = x1_list(n);
+        x0 = target_root - 3*rand();
+        x1 = target_root + 3*rand();
         % reset input_list for the next test
         my_recorder.clear_input_list();
         
@@ -84,7 +84,7 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
         if solver == "Bisection"
             x_current_list = [x_current_list,guess_list(1:end-1)];
             x_next_list = [x_next_list,guess_list(2:end)];
-            index_list = [index_list,guess_list(1:end-1)];
+            index_list = [index_list,1:length(guess_list)-1];
         else
             x_current_list = [x_current_list,input_list(1:end-1)];
             x_next_list = [x_next_list,input_list(2:end)];
@@ -153,13 +153,12 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
     %compute the corresponding y values
     fit_line_y = k*fit_line_x.^p;
     %plot on a loglog plot.
-    loglog(fit_line_x,fit_line_y,'k-','linewidth',2)
-    xlim([1e-20, 1e2]);
-    ylim([1e-20, 1e2]);
+    loglog(fit_line_x,fit_line_y,'k-','linewidth',1)
+    xlim([1e-17, 1e1]);
+    ylim([1e-17, 1e1]);
     leg = legend("Raw Data", "Filtered Data", "Fit Line");
     set(leg,'location','northwest');
-    title("");
-
+    title(sprintf('Error Convergence Plot for %s Root Solver', solver))
     
 end
 
