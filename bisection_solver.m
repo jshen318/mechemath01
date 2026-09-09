@@ -58,7 +58,6 @@ function [x_mid, exit_flag, guess_list] = bisection_solver(fun,x_left,x_right,dx
         % iterations are too close together (guesses too far left/right)
         % final value guess is 'close enough' to zero
         % or maximum iteration values reached
-        % disp(x_mid)
         value_flag = ftol < abs(y_mid);
         interval_flag = dxtol < (x_right - x_left);
         iteration_flag = max_iter > iter;

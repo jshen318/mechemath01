@@ -18,12 +18,13 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
     interval_flag = true;
     value_flag = true;
 
+    y0 = fun(x0);
+    y1 = fun(x1);
     % loop through newton's method until the root is found, or until
     % the iteration maximum is hit
     while interval_flag && value_flag && iteration_flag
-        y0 = fun(x0);
-        y1 = fun(x1);
-
+        
+        
 
         if dxmax < abs(x1 - x0)         % check for zero in denom
             disp("Zero denominator error, or oversized update step size.")
@@ -32,12 +33,18 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
         end
         
         x2 = x1 - y1*((x1-x0) / (y1-y0)); % otherwise, continue computing
-        
+        y2 = fun(x2);
+
+
         if mod(iter,2) == 0      % alternate assignment variable every loop
             x0 = x2;
+            y0 = y2;
         else
             x1 = x2;
+            y1 = y2;
         end
+        
+
 
         iter = iter+1;          % add one to the iteration
         
@@ -49,7 +56,7 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
         % maximum iteration values reached
         % iterations are too far apart
         interval_flag = dxtol < abs(x1 - x0);
-        value_flag = ftol < abs(fun(x2));
+        value_flag = ftol < abs(y1);
         iteration_flag = max_iter > iter;
 
         % else: continue while loop to try and find roots
@@ -58,7 +65,7 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
 
     % success is based on whether the final value is 'close enough' to
     % zero. set exit_flag correspondingly
-    if ftol > abs(fun(x2))
+    if ftol > abs(y1)
         exit_flag = 1;
         return
     elseif ~interval_flag

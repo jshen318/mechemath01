@@ -20,6 +20,8 @@ function [x, exit_flag] = newton_solver(fun,x0,dxtol,ftol,max_iter,dxmax)
     iteration_flag = true;     % set flags True to start the while loop
     interval_flag = true;
     value_flag = true;
+    
+    
 
     % loop through newton's method until the root is found, or until
     % the iteration maximum is hit
@@ -66,4 +68,5 @@ function [x, exit_flag] = newton_solver(fun,x0,dxtol,ftol,max_iter,dxmax)
         return
     end
 
+   
 end
