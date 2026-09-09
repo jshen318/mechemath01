@@ -59,10 +59,14 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
         % you will need to change this, depending on the solver
         if solver == "Newton"
             x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax)
+            [dfdx,d2fdx2] = approximate_derivative(@test_func01, x_root)
+            newt_k_pred = abs((1/2)*(d2fdx2/dfdx))
         elseif solver == "Secant"
             x_root = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax)
         elseif solver == "Bisection"
             x_root = bisection_solver(f_record,x0,x1,dxtol,ftol,max_iter)
+        elseif solver == "Fzero"
+            x_root = fzero(f_record, x0);
         else
             disp("Input valid solver method: Newton, Secant, or Bisection")
         end
@@ -128,6 +132,8 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
     
     
     [p,k] = generate_error_fit(x_regression, y_regression)
+    
+    
 
     %generate x data on a logarithmic range
     fit_line_x = 10.^[-16:.01:1];
@@ -135,8 +141,13 @@ function [abs_error_next, abs_error_current] = convergence_experiment(num_iter, 
     fit_line_y = k*fit_line_x.^p;
     %plot on a loglog plot.
     loglog(fit_line_x,fit_line_y,'k-','linewidth',2)
+    xlim([1e-20, 1e2]);
+    ylim([1e-20, 1e2]);
+    leg = legend("Raw Data", "Filtered Data", "Fit Line");
+    set(leg,'location','northwest');
+    title("");
 
-    legend("Raw Data", "Filtered Data", "Fit Line")
+    
 end
 
 %Definition of the test function and its derivative (as a single function):
