@@ -42,15 +42,7 @@ function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_r
     % list that tracks which iteration (n) in a trial 
     % each data point was collected from
     index_list = [];
-    
-    g0_list = zeros(0, length(x0_list));
-    g1_list = zeros(0, length(x0_list));
-    exit_flags = zeros(0, length(x0_list));
-    x0_succ = [];
-    x1_succ = [];
-    
-    x0_fail = [];
-    x1_fail = [];
+  
 
     % loop through each trial
     for n = 1:num_iter
@@ -60,8 +52,7 @@ function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_r
         x0 = x0_ref - 3*rand();
         x1 = x1_ref + 3*rand();
 
-        g0_list(n) = x0;
-        g1_list(n) = x1;
+      
 
         % reset input_list for the next test
         my_recorder.clear_input_list();
@@ -69,20 +60,20 @@ function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_r
         % Call your root finder using the recording function
         % you will need to change this, depending on the solver
         if solver == "Newton"
-            [x_root, exit_flag] = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax);
+            x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax);
             [dfdx,d2fdx2] = approximate_derivative(func, x_root);
-            newt_k_pred = abs((1/2)*(d2fdx2/dfdx));
+            %newt_k_pred = abs((1/2)*(d2fdx2/dfdx))
         elseif solver == "Secant"
-            [x_root, exit_flag] = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax);
+            x_root = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax);
         elseif solver == "Bisection"
-            [x_root, exit_flag, input_list] = bisection_solver(f_record,x0,x1,dxtol,ftol,max_iter);
+            [x_root, ~, input_list] = bisection_solver(f_record,x0,x1,dxtol,ftol,max_iter);
         elseif solver == "Fzero"
             x_root = fzero(f_record, x0);
         else
-            disp("Input valid solver method: Newton, Secant, or Bisection")
+            disp("Input valid solver method: Newton, Secant, Bisection, or Fzero")
         end
         
-        exit_flags(n) = exit_flag;
+        
 
         %See what input values were used when f_record was called:
         if solver ~= 'Bisection'
@@ -171,21 +162,6 @@ function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_r
     title(sprintf('Error Convergence Plot for %s Root Solver', solver))
     
 
-    for i = 1:length(exit_flags)
-        if exit_flags(i) == 1
-            x0_succ(i) = g0_list(i);
-            x1_succ(i) = g1_list(i);
-        elseif exit_flags(i) == 0
-            x0_fail(i) = g0_list(i);
-            x1_fail(i) = g1_list(i);
-        end 
-    end
-
-    exit_flags
-    figure(2)
-    hold on
-    plot(x0_fail, x1_fail, 'ro', 'MarkerFaceColor','r');
-    plot(x0_succ, x1_succ, 'go', 'MarkerFaceColor','g');
     
 
 end
