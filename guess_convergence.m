@@ -43,8 +43,6 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
         % you will need to change this, depending on the solver
         if solver == "Newton"
             [x_root,exit_flag] = newton_solver(func,x0,dxtol,ftol,max_iter,dxmax);
-            % [dfdx,d2fdx2] = approximate_derivative(func, x_root);
-            % newt_k_pred = abs((1/2)*(d2fdx2/dfdx))
         elseif solver == "Secant"
             [~, exit_flag] = secant_solver(func,x0,x1,dxtol,ftol,max_iter,dxmax);
         elseif solver == "Bisection"
