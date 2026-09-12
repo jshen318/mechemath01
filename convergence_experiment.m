@@ -14,7 +14,7 @@
 %   "Bisection"
 %OUTPUTS
 %   
-function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_ref, x1_ref, solver)
+function convergence_experiment(func, x0_ref, x1_ref, solver)
     num_iter = 1000;
     dxtol = 1e-14;
     ftol = 1e-14;
@@ -29,10 +29,6 @@ function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_r
     % note: function handle "@" is necessary due to definition style
     f_record = my_recorder.generate_recorder_fun(func);
 
-    % create a list for the initial guesses that we would like to use in 
-    % each trial
-    x0_list = linspace(x0_ref-3,x0_ref+3,num_iter);
-    x1_list = linspace(x1_ref-3,x1_ref+3,num_iter);
     % list of estimate at current iteration (x_{n})
     x_current_list = [];
     
@@ -47,12 +43,8 @@ function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_r
     % loop through each trial
     for n = 1:num_iter
         % pull out the left and right guess for the trial
-        % x0 = x0_list(n);
-        % x1 = x1_list(n);
         x0 = x0_ref - 3*rand();
         x1 = x1_ref + 3*rand();
-
-      
 
         % reset input_list for the next test
         my_recorder.clear_input_list();
@@ -62,7 +54,7 @@ function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_r
         if solver == "Newton"
             x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax);
             [dfdx,d2fdx2] = approximate_derivative(func, x_root);
-            %newt_k_pred = abs((1/2)*(d2fdx2/dfdx))
+            newt_k_pred = abs((1/2)*(d2fdx2/dfdx));
         elseif solver == "Secant"
             x_root = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax);
         elseif solver == "Bisection"
@@ -73,17 +65,14 @@ function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_r
             disp("Input valid solver method: Newton, Secant, Bisection, or Fzero")
         end
         
-        
-
         %See what input values were used when f_record was called:
-        if solver ~= 'Bisection'
-         input_list = my_recorder.get_input_list();
-        end
         %at this point, input_list will be populated with the values that
         %the solver called at each iteration.
         %In other words, it is now [x_1,x_2,...x_n-1,x_n]
-    
         %append the collected data to the compilation
+        if solver ~= 'Bisection'
+         input_list = my_recorder.get_input_list();
+        end
         x_current_list = [x_current_list,input_list(1:end-1)];
         x_next_list = [x_next_list,input_list(2:end)];
         index_list = [index_list,1:length(input_list)-1];
@@ -144,26 +133,20 @@ function [abs_error_next, abs_error_current] = convergence_experiment(func, x0_r
     hold on
     loglog(x_regression, y_regression, 'bo','markerfacecolor','b','markersize',2);
     
-    
     [p,k] = generate_error_fit(x_regression, y_regression)
-    
-    
-    
+   
     %generate x data on a logarithmic range
     fit_line_x = 10.^[-16:.01:1];
     %compute the corresponding y values
     fit_line_y = k*fit_line_x.^p;
     %plot on a loglog plot.
-    loglog(fit_line_x,fit_line_y,'k-','linewidth',1)
+    loglog(fit_line_x,fit_line_y,'k-','linewidth',1);
     xlim([1e-17, 1e1]);
     ylim([1e-17, 1e1]);
     leg = legend("Raw Data", "Filtered Data", "Fit Line");
     set(leg,'location','northwest');
     title(sprintf('Error Convergence Plot for %s Root Solver', solver))
     
-
-    
-
 end
 
 %Definition of the test function and its derivative (as a single function):

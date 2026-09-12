@@ -92,54 +92,5 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
         plot(x0_succ, x1_succ, 'g.', 'MarkerSize', 2);
 
     end
-
-    
-
-    % % loop through each trial
-    % for n = 1:num_iter^2
-    %     % pull out the left and right guess for the trial
-    %     x0 = x0_list(n);
-    %     x1 = x1_list(n);
-    % 
-    %     % Call your root finder using the recording function
-    %     % you will need to change this, depending on the solver
-    %     if solver == "Newton"
-    %         [~,exit_flag] = newton_solver(func,x0,dxtol,ftol,max_iter,dxmax);
-    %         % [dfdx,d2fdx2] = approximate_derivative(func, x_root);
-    %         % newt_k_pred = abs((1/2)*(d2fdx2/dfdx))
-    %     elseif solver == "Secant"
-    %         [~, exit_flag] = secant_solver(func,x0,x1,dxtol,ftol,max_iter,dxmax);
-    %     elseif solver == "Bisection"
-    %         [~, exit_flag] = bisection_solver(func,x0,x1,dxtol,ftol,max_iter);
-    %     else
-    %         disp("Input valid solver method: Newton, Secant, or Bisection")
-    %     end
-    % 
-    %     if exit_flag == 1
-    %         result(n) = 1;
-    %     elseif exit_flag == 0
-    %         result(n) = 0;
-    %     end 
-    % end
-    
-    % plot results
-    % if solver == "Newton"
-    %     figure(1)
-    %     for i=1:length(x0_succ)
-    %         y_succ = func(x0_succ(i));
-    %     end
-    %     for j=1:length(x0_fail)
-    %         y_fail = func(x0_fail(i));
-    %     end
-    %     plot(x0, y_fail, 'r.')
-    %     plot(x0, y_succ, 'g.')
-    % 
-    % else
-    %     figure(1)
-    %     hold on
-    %     plot(x0_fail, x1_fail, 'r.', 'MarkerFaceColor','r');
-    %     plot(x0_succ, x1_succ, 'g.', 'MarkerFaceColor','g');
-    % end
-
 end
 

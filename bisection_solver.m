@@ -49,8 +49,6 @@ function [x_mid, exit_flag, guess_list] = bisection_solver(fun,x_left,x_right,dx
             x_left = x_mid;
         end
 
-        % guess_list(end+1)=x_mid;
-
         % add one to the iteration
         iter = iter+1;
 
