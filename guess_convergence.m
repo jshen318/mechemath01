@@ -13,9 +13,13 @@
 %   solver: string representing which solver to use: "Newton", "Secant", or
 %   "Bisection"
 %OUTPUTS
-%   
+%   none
 function guess_convergence(func, x0_ref, x1_ref, solver)
-    num_iter = 100;
+    if solver == "Newton" || solver == "Fzero"
+        num_iter = 500;
+    else
+        num_iter = 60;
+    end
     dxtol = 1e-14;
     ftol = 1e-14;
     max_iter = 200;
@@ -26,54 +30,101 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
     guess0_list = linspace(x0_ref,x1_ref,num_iter);
     guess1_list = linspace(x0_ref,x1_ref,num_iter);
 
-    %[x0_list, x1_list] = meshgrid(guess0_list, guess1_list);
-   
-
+    % initialize variables
     x0_succ = [];
     x1_succ = [];
-
     x0_fail = [];
     x1_fail = [];
-    
+    root = NaN;
 
+    % for the Newton method solver:
     if solver == "Newton"
+        % run the solver for each iteration
         for i = 1:num_iter
-            x0 = guess0_list(i);
-             [~,exit_flag] = newton_solver(func,x0,dxtol,ftol,max_iter,dxmax);
-
-             if exit_flag == 1
-                 x0_succ(end+1) = x0; % store successful guess
-             else
-                x0_fail(end+1) = x0; % store failed guess
-             end
+            x0 = guess0_list(i);  % pull guesses from the list
+            [x_root,exit_flag] = newton_solver(func,x0,dxtol,ftol,max_iter,dxmax);
+                
+            % store x_root on one successful solver run
+            if ~isnan(x_root) && isnan(root)
+                root = x_root
+            end
+            
+            % store successful and failed guesses in separate lists based
+            % on the success flag that the solver outputs
+            if exit_flag == 1
+                 x0_succ(end+1) = x0; 
+            else
+                x0_fail(end+1) = x0;
+            end
         end
-        % plot newton's method
+        
+        % plot the function as a color-coded map of successful and failed
+        % guesses 
         figure(1);
         hold on;
-        x = linspace(x0_ref, x1_ref, num_iter);
-        plot(x, test_func03(x), 'k-')
-        plot(x0_succ, func(x0_succ), 'g.', 'MarkerFaceColor', 'g');
-        plot(x0_fail, func(x0_fail), 'r.', 'MarkerFaceColor', 'r');
-        xlabel('');
-        ylabel('');
-        title('Newton Method Convergence');
-        legend('function', 'successful', 'failed');
-        
+        plot(x0_succ, func(x0_succ), 'b.', 'MarkerFaceColor', 'b', 'Displayname',"Successful Guesses");
+        plot(x0_fail, func(x0_fail), 'r.', 'MarkerFaceColor', 'r', 'Displayname',"Failed Guesses");
+        plot(root, 0, 'ko', 'MarkerFaceColor', 'cyan', 'MarkerSize', 7, 'Displayname',"Function Root")
+        title(sprintf('%s Method Sigmoid Guess Successes', solver));
+        legend('Location','northwest')
+        yline(0, 'LineStyle','--','HandleVisibility','off');
+        xlabel("x")
+        ylabel("f(x)")
 
-    elseif solver == "Secant" || solver == "Bisection"
+    % for the Fzero solver:
+    elseif solver == 'Fzero'
+        % run the solver for each iteration
+        for i = 1:num_iter
+            x0 = guess0_list(i);        % pull guesses
+            x_root = fzero(func,x0);    % run solver
+            
+            % when Fzero fails, it outputs NaN, so use isnan to determine
+            % whether the function failed or succeeded. 
+            if isnan(x_root)
+                x0_fail(end+1) = x0; 
+            else
+                x0_succ(end+1) = x0; 
+            end
+        end
+    
+        % plot the function as a color-coded map of successes & failures
+        figure(1);
+        hold on;
+        plot(x0_succ, func(x0_succ), 'b.', 'MarkerFaceColor', 'b', 'Displayname',"Successful Guesses");
+        plot(x0_fail, func(x0_fail), 'r.', 'MarkerFaceColor', 'r', 'Displayname',"Failed Guesses");
+        plot(x_root, 0, 'ko', 'MarkerFaceColor', 'cyan', 'MarkerSize', 7, 'Displayname',"Function Root")
+        title(sprintf('%s Method Sigmoid Guess Successes', solver));
+        legend('Location','northwest')
+        yline(0, 'LineStyle','--','HandleVisibility','off');
+        xlabel("x")
+        ylabel("f(x)")
+
+    % for the Secant and Bisection methods:
+    else
+        % set up a meshgrid of guesses
         [x0_list, x1_list] = meshgrid(guess0_list, guess1_list);
-        % loop through each trial
+
+        % run the solver for each iteration
+        % since we're using a 2D grid of guesses, the number of iterations
+        % is the regular iteration size squared
         for n = 1:num_iter^2
-        % pull out the left and right guess for the trial
+            % pull each pair of guesses from the mesh
             x0 = x0_list(n);
             x1 = x1_list(n);
     
+            % run the solver based on the solver selected on input
             if solver == "Secant"
-                [~, exit_flag] = secant_solver(func,x0,x1,dxtol,ftol,max_iter,dxmax);
+                [x_root, exit_flag] = secant_solver(func,x0,x1,dxtol,ftol,max_iter,dxmax);
             elseif solver == "Bisection"
-                [~, exit_flag] = bisection_solver(func,x0,x1,dxtol,ftol,max_iter);
+                [x_root, exit_flag] = bisection_solver(func,x0,x1,dxtol,ftol,max_iter);
             else
-                disp("Input valid solver method")
+                disp("Input valid solver method: choose Newton, Bisection, Secant, or Fzero")
+                return
+            end
+
+            % store x_root when the solver runs successfully
+            if ~isnan(x_root) && isnan(root) && exit_flag
+                root = x_root;
             end
             
             % store successful/failed guesses
@@ -85,12 +136,28 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
                 x1_fail(end+1) = x1;
             end
         end
+
         % plot 
         figure(1)
         hold on;
-        plot(x0_fail, x1_fail, 'r.', 'MarkerSize', 2);
-        plot(x0_succ, x1_succ, 'g.', 'MarkerSize', 2);
+        yline(root, 'LineStyle','-','HandleVisibility','off', 'Color', [.7 .7 .7]);
+        xline(root, 'LineStyle','-','HandleVisibility','off', 'Color', [.7 .7 .7]);
+        plot(x0_fail, x1_fail, 'r.', 'MarkerSize', 4, 'Displayname',"Successful Guesses");
+        plot(x0_succ, x1_succ, 'b.', 'MarkerSize', 4, 'Displayname', "Failed Guesses");  
+        plot(root, root, 'ko', 'MarkerFaceColor', 'cyan', 'MarkerSize', 7, 'Displayname',"Solved root value")
+        title(sprintf('%s Method Sigmoid Guess Successes', solver));
+        legend('Location','southoutside')
 
+        if solver == "Secant"
+            xlabel("x_0")
+            ylabel("x_1")
+        elseif solver == "Bisection"
+            xlabel("x_L")
+            ylabel("x_R")
+        else
+            disp("How'd you even get this error message")
+        end
     end
+
 end
 

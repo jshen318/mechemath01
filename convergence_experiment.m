@@ -54,7 +54,7 @@ function convergence_experiment(func, x0_ref, x1_ref, solver)
         if solver == "Newton"
             x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax);
             [dfdx,d2fdx2] = approximate_derivative(func, x_root);
-            newt_k_pred = abs((1/2)*(d2fdx2/dfdx));
+            newt_k_pred = abs((1/2)*(d2fdx2/dfdx))
         elseif solver == "Secant"
             x_root = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax);
         elseif solver == "Bisection"
@@ -62,7 +62,7 @@ function convergence_experiment(func, x0_ref, x1_ref, solver)
         elseif solver == "Fzero"
             x_root = fzero(f_record, x0);
         else
-            disp("Input valid solver method: Newton, Secant, Bisection, or Fzero")
+            disp("Input valid solver method: choose Newton, Secant, Bisection, or Fzero")
         end
         
         %See what input values were used when f_record was called:
