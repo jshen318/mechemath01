@@ -57,7 +57,7 @@ function [x_mid, exit_flag, guess_list] = bisection_solver(fun,x_left,x_right,dx
         % final value guess is 'close enough' to zero
         % or maximum iteration values reached
         value_flag = ftol < abs(y_mid);
-        interval_flag = dxtol < (x_right - x_left);
+        interval_flag = dxtol < abs(x_right - x_left);
         iteration_flag = max_iter > iter;
 
         % else: continue while loop to try and find roots
@@ -66,6 +66,19 @@ function [x_mid, exit_flag, guess_list] = bisection_solver(fun,x_left,x_right,dx
     
     % success is based on whether the final value is 'close enough' to
     % zero. set exit_flag correspondingly
-    exit_flag = ftol > abs(y_mid);
+    % exit_flag = ftol > abs(y_mid);
+    if ftol > abs(y_mid)
+        exit_flag = 1;
+        return
+    elseif ~interval_flag
+        % disp("Iterations tending towards a false root.")
+        exit_flag = 0;
+        return
+    else ~iteration_flag;
+        % disp("Maximum iterations reached.")
+        exit_flag = 0;
+        return
+    end
+
 
 end

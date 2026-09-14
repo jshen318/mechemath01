@@ -142,8 +142,8 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
         hold on;
         yline(root, 'LineStyle','-','HandleVisibility','off', 'Color', [.3 .3 .3]);
         xline(root, 'LineStyle','-','HandleVisibility','off', 'Color', [.3 .3 .3]);
-        plot(x0_fail, x1_fail, 'r.', 'MarkerSize', 4, 'Displayname',"Successful Guesses");
-        plot(x0_succ, x1_succ, 'b.', 'MarkerSize', 4, 'Displayname', "Failed Guesses");  
+        plot(x0_fail, x1_fail, 'r.', 'MarkerSize', 4, 'Displayname',"Failed Guesses");
+        plot(x0_succ, x1_succ, 'b.', 'MarkerSize', 4, 'Displayname', "Successful Guesses");  
         plot(root, root, 'ko', 'MarkerFaceColor', 'cyan', 'MarkerSize', 7, 'Displayname',"Solved root value (x\_root, x\_root)")
         title(sprintf('%s Method Sigmoid Guess Successes', solver));
         legend('Location','southoutside')
