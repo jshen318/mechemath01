@@ -9,22 +9,20 @@
 %   dxmax: threshold for checking for a divide by zero error: 
 %   terminate when abs(x_{i+1}-x_i) > dxmax, where dxmax is a very large number
 %OUTPUTS
-%   x: estimate for root of fun
+%   x2: estimate for root of fun
 %   exit_flag: an integer indicating whether or not the solver succeeded
 function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
     iter = 0;                  % set iteration variable
-
+    y0 = fun(x0);              % solve for initial function values
+    y1 = fun(x1);
+    
     iteration_flag = true;     % set flags True to start the while loop
     interval_flag = true;
     value_flag = true;
 
-    y0 = fun(x0);
-    y1 = fun(x1);
     % loop through newton's method until the root is found, or until
     % the iteration maximum is hit
     while interval_flag && value_flag && iteration_flag
-        
-        
 
         if dxmax < abs(x1 - x0)         % check for zero in denom
             % disp("Zero denominator error, or oversized update step size.")
@@ -35,7 +33,6 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
         x2 = x1 - y1*((x1-x0) / (y1-y0)); % otherwise, continue computing
         y2 = fun(x2);
 
-
         if mod(iter,2) == 0      % alternate assignment variable every loop
             x0 = x2;
             y0 = y2;
@@ -44,12 +41,9 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
             y1 = y2;
         end
         
-
-
-        iter = iter+1;          % add one to the iteration
+        % add one to the iteration
+        iter = iter+1;
         
-    
-
         % break while loop if...
         % iterations are too close together (tending to something not a root)
         % final value guess is 'close enough' to zero

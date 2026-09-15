@@ -1,25 +1,30 @@
-    %starter code for convergence experiments
+% code for plotting successful and failed guesses
 %INPUTS:
 %   fun: the function we are computing the root of
-%   Note that fun(x) should output [f,dfdx], where dfdx is the derivative of f
-%   (see test_func01 below for example)
-%   x0: initial guess
-%   dxtol: termination threshold (stop when interval abs(x_{i+1}-x_i) < dxtol)
-%   ftol: termination threshold (stop when abs(f(x_{i}))<ftol)
-%   max_iter: maximum iteration limit
-%   dxmax: threshold for checking for a divide by zero error: 
-%   terminate when abs(x_{i+1}-x_i) > dxmax, where dxmax is a very large number
-%   !!! NOTE !!! dxmax not used for Bisection method
+%   x0_ref: initial guess
+%   x1_ref: rightward or second guess, for Secant/Bisection solvers
 %   solver: string representing which solver to use: "Newton", "Secant", or
 %   "Bisection"
 %OUTPUTS
-%   none
+%   None
 function guess_convergence(func, x0_ref, x1_ref, solver)
+    
+    % set iterations based on solver type
     if solver == "Newton" || solver == "Fzero"
         num_iter = 500;
     else
         num_iter = 60;
     end
+
+    % parameters: 
+    %   dxtol: termination threshold 
+    %          (stop when interval abs(x_{i+1}-x_i) < dxtol)
+    %   ftol: termination threshold 
+    %          (stop when abs(f(x_{i}))<ftol)
+    %   max_iter: maximum iteration limit
+    %   dxmax: threshold for checking for a divide by zero error: 
+    %   terminate when abs(x_{i+1}-x_i) > dxmax, where dxmax is very large
+    %   !!! NOTE !!! dxmax not used for Bisection method
     dxtol = 1e-14;
     ftol = 1e-14;
     max_iter = 200;
@@ -68,8 +73,8 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
         title(sprintf('%s Method Sigmoid Guess Successes', solver));
         legend('Location','northwest')
         yline(0, 'LineStyle','--','HandleVisibility','off');
-        xlabel("x")
-        ylabel("f(x)")
+        xlabel("Input x")
+        ylabel("Function output f(x)")
 
     % for the Fzero solver:
     elseif solver == 'Fzero'
@@ -96,8 +101,8 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
         title(sprintf('%s Method Sigmoid Guess Successes', solver));
         legend('Location','northwest')
         yline(0, 'LineStyle','--','HandleVisibility','off');
-        xlabel("x")
-        ylabel("f(x)")
+        xlabel("Input x")
+        ylabel("Function output f(x)")
 
     % for the Secant and Bisection methods:
     else
@@ -149,11 +154,11 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
         legend('Location','southoutside')
 
         if solver == "Secant"
-            xlabel("x_0")
-            ylabel("x_1")
+            xlabel("First guess x_0")
+            ylabel("Next guess x_1")
         elseif solver == "Bisection"
-            xlabel("x_L")
-            ylabel("x_R")
+            xlabel("Leftmost guess x_L")
+            ylabel("Rightmost guess x_R")
         else
             disp("How'd you even get this error message")
         end

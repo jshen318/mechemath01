@@ -1,20 +1,24 @@
-    %starter code for convergence experiments
+% code for plotting convergence rates
 %INPUTS:
 %   fun: the function we are computing the root of
 %   Note that fun(x) should output [f,dfdx], where dfdx is the derivative of f
 %   (see test_func01 below for example)
-%   x0: initial guess
-%   dxtol: termination threshold (stop when interval abs(x_{i+1}-x_i) < dxtol)
-%   ftol: termination threshold (stop when abs(f(x_{i}))<ftol)
-%   max_iter: maximum iteration limit
-%   dxmax: threshold for checking for a divide by zero error: 
-%   terminate when abs(x_{i+1}-x_i) > dxmax, where dxmax is a very large number
-%   !!! NOTE !!! dxmax not used for Bisection method
+%   x0_ref: initial guess
+%   x1_ref: rightward or second guess, for Secant/Bisection solvers
 %   solver: string representing which solver to use: "Newton", "Secant", or
 %   "Bisection"
 %OUTPUTS
-%   
+%   None
 function convergence_experiment(func, x0_ref, x1_ref, solver)
+    % parameters:
+    %   dxtol: termination threshold 
+    %          (stop when interval abs(x_{i+1}-x_i) < dxtol)
+    %   ftol: termination threshold 
+    %         (stop when abs(f(x_{i}))<ftol)
+    %   max_iter: maximum iteration limit
+    %   dxmax: threshold for checking for a divide by zero error: 
+    %   terminate when abs(x_{i+1}-x_i) > dxmax, where dxmax is a very large number
+    %   !!! NOTE !!! dxmax not used for Bisection method
     num_iter = 1000;
     dxtol = 1e-14;
     ftol = 1e-14;
@@ -128,7 +132,7 @@ function convergence_experiment(func, x0_ref, x1_ref, solver)
     loglog(abs_error_current,abs_error_next,...
         'ro','markerfacecolor','r','markersize',2);
 
-    xlabel('\epsilon_n (-)'); ylabel('\epsilon_{n+1} (-)');
+    xlabel('Error at current iteration (\epsilon_n) (-)'); ylabel('Error at next iteration (\epsilon_{n+1}) (-)');
     title('Error Convergence Plot for Solver');
     hold on
     loglog(x_regression, y_regression, 'bo','markerfacecolor','b','markersize',2);

@@ -1,4 +1,4 @@
-%Root finding function via bisection algorithm
+% root finding function via bisection algorithm
 %INPUTS:
 %   fun: the function we are computing the root of
 %   x_left: left guess
@@ -20,7 +20,8 @@ function [x_mid, exit_flag, guess_list] = bisection_solver(fun,x_left,x_right,dx
     interval_flag = true;
     value_flag = true;
 
-    guess_list = [];
+    % initialize a list for storing guesses
+    guess_list = zeros(max_iter, 0);
 
     if y_left*y_right > 0    % check if guesses crosses zero
         x_mid = NaN;
@@ -38,13 +39,13 @@ function [x_mid, exit_flag, guess_list] = bisection_solver(fun,x_left,x_right,dx
 
         % check if the left and middle values are different signs
         if y_left*y_mid < 0
-            guess_list(end+1) = x_right;
+            guess_list(iter+1) = x_right;
             y_right = y_mid;
             x_right = x_mid;
         
         % check if the right and middle values are different signs
         elseif y_right*y_mid < 0
-            guess_list(end+1) = x_left;
+            guess_list(iter+1) = x_left;
             y_left = y_mid;
             x_left = x_mid;
         end

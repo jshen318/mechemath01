@@ -1,4 +1,4 @@
-    %Root finding function via Newton's method
+% root finding function via Newton's method
 %INPUTS:
 %   fun: the function we are computing the root of
 %   Note that fun(x) should output [f,dfdx], where dfdx is the derivative of f
