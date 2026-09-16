@@ -30,18 +30,24 @@ function [V, G] = egg_func(s,x0,y0,theta,egg_params)
     a=egg_params.a;
     b=egg_params.b;
     c=egg_params.c;
+
     %compute x (without rotation or translation)
     x = a*cos(2*pi*s);
+    
     %useful intermediate variable
     f = exp(-c*x/2);
+    
     %compute y (without rotation or translation)
     y = b*sin(2*pi*s).*f;
+    
     %compute the derivatives of x and y (without rotation or translation)
     dx = -2*pi*a*sin(2*pi*s);
     df = (-c/2)*f.*dx;
     dy = 2*pi*b*cos(2*pi*s).*f + b*sin(2*pi*s).*df;
+    
     %rotation matrix corresponding to theta
     R = [cos(theta),-sin(theta);sin(theta),cos(theta)];
+    
     %compute position and gradient for rotated + translated oval
     V = R*[x;y]+[x0*ones(1,length(theta));y0*ones(1,length(theta))];
     G = R*[dx;dy];
