@@ -8,7 +8,7 @@
 %   solver: string representing which solver to use: "Newton", "Secant", or
 %   "Bisection"
 %OUTPUTS
-%   None
+%   None    
 function convergence_experiment(func, x0_ref, x1_ref, solver)
     % parameters:
     %   dxtol: termination threshold 

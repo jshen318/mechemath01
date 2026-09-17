@@ -11,7 +11,17 @@
 %OUTPUTS
 %   x2: estimate for root of fun
 %   exit_flag: an integer indicating whether or not the solver succeeded
-function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
+function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)   
+    arguments
+        fun (1,:) function_handle
+        x0 (1,:) double
+        x1 (1,:) double
+        dxtol (1,:) double = 10e-14;
+        ftol (1,:) double = 10e-14;
+        max_iter (1,:) double = 200;
+        dxmax (1,:) double = 10e5;
+    end
+
     iter = 0;                  % set iteration variable
     y0 = fun(x0);              % solve for initial function values
     y1 = fun(x1);
@@ -25,13 +35,13 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
     while interval_flag && value_flag && iteration_flag
 
         if dxmax < abs(x1 - x0)         % check for zero in denom
-            disp("Zero denominator error, or oversized update step size.")
+            % disp("Zero denominator error, or oversized update step size.")
             exit_flag = 0;              % if true: mark failure and exit
             return                      % the program
         end
         
         x2 = x1 - y1*((x1-x0) / (y1-y0)); % otherwise, continue computing
-        y2 = fun(x2)
+        y2 = fun(x2);
 
         if mod(iter,2) == 0      % alternate assignment variable every loop
             x0 = x2;
@@ -63,11 +73,11 @@ function [x2, exit_flag] = secant_solver(fun, x0, x1,dxtol,ftol,max_iter,dxmax)
         exit_flag = 1;
         return
     elseif ~interval_flag
-        disp("Iterations tending towards a false root.")
+        % disp("Iterations tending towards a false root.")
         exit_flag = 0;
         return
     else ~iteration_flag;
-        disp("Maximum iterations reached.")
+        % disp("Maximum iterations reached.")
         exit_flag = 0;
         return
     end
