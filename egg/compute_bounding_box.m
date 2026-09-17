@@ -7,14 +7,8 @@
 %OUTPUTS:
 %   x_range: the x limits of the bounding box in the form [x_min,x_max]
 %   y_range: the y limits of the bounding box in the form [y_min,y_max]
-function [x_range,y_range] = compute_bounding_box()
-    %set the oval hyper-parameters
-    egg_params = struct();
-    egg_params.a = 3; egg_params.b = 2; egg_params.c = .15;
+function [x_range,y_range] = compute_bounding_box(egg_params, x0, y0, theta)
 
-    %specify the position and orientation of the egg
-    x0 = 5; y0 = 5; theta = pi/6;
-    
     % initialize variables
     num_iter = 60;
     xroot_list = zeros(1,2);
