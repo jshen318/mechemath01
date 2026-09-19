@@ -12,6 +12,14 @@
 %   exit_flag: an integer indicating that the solver succeeded (1) or
 %   failed (0)
 function [x_mid, exit_flag, guess_list] = bisection_solver(fun,x_left,x_right,dxtol,ftol,max_iter)
+    arguments
+        fun (1,:) function_handle
+        x_left (1,:) double
+        x_right (1,:) double
+        dxtol (1,:) double = 10e-14;
+        ftol (1,:) double = 10e-14;
+        max_iter (1,:) double = 200;
+    end
     iter = 0;                  % set iteration variable
     y_left = fun(x_left);       % solve for initial function values
     y_right = fun(x_right);
