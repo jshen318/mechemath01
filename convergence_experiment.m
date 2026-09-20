@@ -56,13 +56,13 @@ function convergence_experiment(func, x0_ref, x1_ref, solver)
         % Call your root finder using the recording function
         % you will need to change this, depending on the solver
         if solver == "Newton"
-            x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax);
-            [dfdx,d2fdx2] = approximate_derivative(func, x_root);
-            newt_k_pred = abs((1/2)*(d2fdx2/dfdx))
+            x_root = newton_solver(f_record,x0,dxtol,ftol,max_iter,dxmax)
+            [dfdx,d2fdx2] = approximate_derivative(func, x_root)
+            newt_k_pred = abs((d2fdx2/(2*dfdx)))
         elseif solver == "Secant"
-            x_root = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax);
+            x_root = secant_solver(f_record,x0,x1,dxtol,ftol,max_iter,dxmax)
         elseif solver == "Bisection"
-            [x_root, ~, input_list] = bisection_solver(f_record,x0,x1,dxtol,ftol,max_iter);
+            [x_root, ~, input_list] = bisection_solver(f_record,x0,x1,dxtol,ftol,max_iter)
         elseif solver == "Fzero"
             x_root = fzero(f_record, x0);
         else

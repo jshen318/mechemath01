@@ -8,8 +8,19 @@
 %OUTPUTS:
 %   t_ground: time that the egg would hit the ground
 %   t_wall: time that the egg would hit the wall
-function [t_ground,t_wall] = eggnimation(traj_fun, y_ground, x_wall)
+function [t_ground,t_wall] = video_eggnimation(traj_fun, y_ground, x_wall)
     
+
+
+    mypath1 = 'C:\Users\ssperou\OneDrive - Olin College of Engineering\Documents\GitHub\mechemath01\egg\';
+    fname='eggnimation.avi';
+    input_fname = [mypath1,fname];
+
+    %create a videowriter, which will write frames to the animation file
+    writerObj = VideoWriter(input_fname);
+    open(writerObj); %must call open before writing any frames
+   
+
     %set the oval hyper-parameters
     egg_params = struct();
     egg_params.a = 3; egg_params.b = 2; egg_params.c = .15;
@@ -26,6 +37,8 @@ function [t_ground,t_wall] = eggnimation(traj_fun, y_ground, x_wall)
 
     % %specify the position and orientation of the egg
     % x0 = 5; y0 = 5; theta = pi/6;
+    %initialize the current figure and save as object
+    fig1 = figure(1);
     hold on; axis equal
     egg_plot = plot(0,0,'k');
     square_plot = plot(0,0);
@@ -65,6 +78,11 @@ function [t_ground,t_wall] = eggnimation(traj_fun, y_ground, x_wall)
         
         %update the actual plotting window
         drawnow;
-        t
+
+        %capture a frame (what is currently plotted)
+        current_frame = getframe(fig1);
+        %write the frame to the video
+        writeVideo(writerObj,current_frame);
     end
+    close(writerObj);
 end
