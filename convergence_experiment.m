@@ -20,8 +20,8 @@ function convergence_experiment(func, x0_ref, x1_ref, solver)
     %   terminate when abs(x_{i+1}-x_i) > dxmax, where dxmax is a very large number
     %   !!! NOTE !!! dxmax not used for Bisection method
     num_iter = 1000;
-    dxtol = 1e-14;
-    ftol = 1e-14;
+    dxtol = 1e-16;
+    ftol = 1e-16;
     max_iter = 200;
     dxmax = 1e10;
 
@@ -74,7 +74,7 @@ function convergence_experiment(func, x0_ref, x1_ref, solver)
         %the solver called at each iteration.
         %In other words, it is now [x_1,x_2,...x_n-1,x_n]
         %append the collected data to the compilation
-        if solver ~= 'Bisection'
+        if solver ~= "Bisection"
          input_list = my_recorder.get_input_list();
         end
         x_current_list = [x_current_list,input_list(1:end-1)];
@@ -132,8 +132,9 @@ function convergence_experiment(func, x0_ref, x1_ref, solver)
     loglog(abs_error_current,abs_error_next,...
         'ro','markerfacecolor','r','markersize',2);
 
-    xlabel('Error at current iteration (\epsilon_n) (-)'); ylabel('Error at next iteration (\epsilon_{n+1}) (-)');
-    title('Error Convergence Plot for Solver');
+    xlabel('Error at current iteration $\epsilon_n (-)$', 'Interpreter', 'Latex'); 
+    ylabel('Error at next iteration $\epsilon_{n+1} (-)$', 'Interpreter', 'Latex');
+    title('Error Convergence Plot for Solver', 'Interpreter', 'Latex');
     hold on
     loglog(x_regression, y_regression, 'bo','markerfacecolor','b','markersize',2);
     
@@ -147,9 +148,11 @@ function convergence_experiment(func, x0_ref, x1_ref, solver)
     loglog(fit_line_x,fit_line_y,'k-','linewidth',1);
     xlim([1e-17, 1e1]);
     ylim([1e-17, 1e1]);
-    leg = legend("Raw Data", "Filtered Data", "Fit Line");
+    leg = legend("Raw Data", "Filtered Data", "Fit Line", 'Interpreter', 'Latex');
     set(leg,'location','northwest');
-    title(sprintf('Error Convergence Plot for %s Root Solver', solver))
+    set(gca,'TickLabelInterpreter','latex')
+    title(sprintf('Error Convergence Plot for %s Root Solver', solver), 'Interpreter', 'Latex')
+    fontsize(17, 'points')
     
 end
 

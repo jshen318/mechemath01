@@ -1,3 +1,4 @@
+
 %Function that computes the collision time for a thrown egg
 %INPUTS:
 %   traj_fun: a function that describes the [x,y,theta] trajectory
