@@ -13,7 +13,7 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
     if solver == "Newton" || solver == "Fzero"
         num_iter = 500;
     else
-        num_iter = 60;
+        num_iter = 200;
     end
 
     % parameters: 
@@ -70,11 +70,13 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
         plot(x0_succ, func(x0_succ), 'b.', 'MarkerFaceColor', 'b', 'Displayname',"Successful Guesses");
         plot(x0_fail, func(x0_fail), 'r.', 'MarkerFaceColor', 'r', 'Displayname',"Failed Guesses");
         plot(root, 0, 'ko', 'MarkerFaceColor', 'cyan', 'MarkerSize', 7, 'Displayname',"Function Root")
-        title(sprintf('%s Method Sigmoid Guess Successes', solver));
-        legend('Location','northwest')
+        title(sprintf('%s Method Sigmoid Guess Successes', solver), 'Interpreter', 'Latex');
+        legend('Location','northwest', 'Interpreter', 'Latex')
         yline(0, 'LineStyle','--','HandleVisibility','off');
-        xlabel("Input x")
-        ylabel("Function output f(x)")
+        xlabel("Input x", 'Interpreter', 'Latex')
+        ylabel("Function output f(x)", 'Interpreter', 'Latex')
+        set(gca,'TickLabelInterpreter','latex')
+        axis square
 
     % for the Fzero solver:
     elseif solver == 'Fzero'
@@ -98,11 +100,13 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
         plot(x0_succ, func(x0_succ), 'b.', 'MarkerFaceColor', 'b', 'Displayname',"Successful Guesses");
         plot(x0_fail, func(x0_fail), 'r.', 'MarkerFaceColor', 'r', 'Displayname',"Failed Guesses");
         plot(x_root, 0, 'ko', 'MarkerFaceColor', 'cyan', 'MarkerSize', 7, 'Displayname',"Function Root")
-        title(sprintf('%s Method Sigmoid Guess Successes', solver));
-        legend('Location','northwest')
+        title(sprintf('%s Method Sigmoid Guess Successes', solver), 'Interpreter', 'Latex');
+        legend('Location','northwest', 'Interpreter', 'Latex')
         yline(0, 'LineStyle','--','HandleVisibility','off');
-        xlabel("Input x")
-        ylabel("Function output f(x)")
+        xlabel("Input x", 'Interpreter', 'Latex')
+        ylabel("Function output f(x)", 'Interpreter', 'Latex')
+        set(gca,'TickLabelInterpreter','latex')
+        axis square
 
     % for the Secant and Bisection methods:
     else
@@ -147,22 +151,25 @@ function guess_convergence(func, x0_ref, x1_ref, solver)
         hold on;
         yline(root, 'LineStyle','-','HandleVisibility','off', 'Color', [.3 .3 .3]);
         xline(root, 'LineStyle','-','HandleVisibility','off', 'Color', [.3 .3 .3]);
-        plot(x0_fail, x1_fail, 'r.', 'MarkerSize', 4, 'Displayname',"Failed Guesses");
-        plot(x0_succ, x1_succ, 'b.', 'MarkerSize', 4, 'Displayname', "Successful Guesses");  
-        plot(root, root, 'ko', 'MarkerFaceColor', 'cyan', 'MarkerSize', 7, 'Displayname',"Solved root value (x\_root, x\_root)")
-        title(sprintf('%s Method Sigmoid Guess Successes', solver));
-        legend('Location','southoutside')
+        plot(x0_fail, x1_fail, 'r.', 'MarkerSize', 5, 'Displayname',"Failed Guesses");
+        plot(x0_succ, x1_succ, 'b.', 'MarkerSize', 5, 'Displayname', "Successful Guesses");  
+        plot(root, root, 'ko', 'MarkerFaceColor', 'cyan', 'MarkerSize', 7, 'Displayname',"Solved root value ($x_{root}$, $x_{root}$)")
+        title(sprintf('%s Method Sigmoid Guess Successes', solver), 'Interpreter', 'Latex');
+        legend('Location','southoutside', 'Interpreter', 'Latex')
+        axis square
+        set(gca,'TickLabelInterpreter','latex')
 
         if solver == "Secant"
-            xlabel("First guess x_0")
-            ylabel("Next guess x_1")
+            xlabel("First guess ($x_0$)", 'Interpreter', 'Latex')
+            ylabel("Next guess ($x_1$)", 'Interpreter', 'Latex')
         elseif solver == "Bisection"
-            xlabel("Leftmost guess x_L")
-            ylabel("Rightmost guess x_R")
+            xlabel("Leftmost guess ($x_L$)", 'Interpreter', 'Latex')
+            ylabel("Rightmost guess ($x_R$)", 'Interpreter', 'Latex')
         else
             disp("How'd you even get this error message")
         end
+       
     end
-
+    fontsize(17, 'points')
 end
 

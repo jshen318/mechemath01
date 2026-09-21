@@ -153,6 +153,7 @@ function convergence_experiment(func, x0_ref, x1_ref, solver)
     set(gca,'TickLabelInterpreter','latex')
     title(sprintf('Error Convergence Plot for %s Root Solver', solver), 'Interpreter', 'Latex')
     fontsize(17, 'points')
+    axis square
     
 end
 
